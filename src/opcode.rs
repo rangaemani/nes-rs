@@ -39,12 +39,12 @@ impl OpCode {
 lazy_static! {
     /// reference vector for all NES opcodes
     pub static ref CPU_OP_CODES: Vec<OpCode> = vec![
-       /////////////////////////////////////Control Structure
+       /////////////////////////////////////SPECIAL
         //// BREAK
         OpCode::new(0x00, "BRK",  1,  7, AddressingMode::NoneAddressing),
         //// NOP
         OpCode::new(0xea, "NOP", 1, 2, AddressingMode::NoneAddressing),
-       /////////////////////////////////////Arithmetic
+       /////////////////////////////////////ARITHMETIC
         //// ADC
         OpCode::new(0x69, "ADC", 2, 2, AddressingMode::Immediate),
         OpCode::new(0x65, "ADC", 2, 3, AddressingMode::ZeroPage),
@@ -90,7 +90,7 @@ lazy_static! {
         OpCode::new(0x19, "ORA", 3, 4/*+1 if page crossed*/, AddressingMode::Absolute_Y),
         OpCode::new(0x01, "ORA", 2, 6, AddressingMode::Indirect_X),
         OpCode::new(0x11, "ORA", 2, 5/*+1 if page crossed*/, AddressingMode::Indirect_Y),
-       /////////////////////////////////////Shifts
+       /////////////////////////////////////SHIFT/UNSHIFT
         //// ASL
         OpCode::new(0x0a, "ASL", 1, 2, AddressingMode::NoneAddressing),
         OpCode::new(0x06, "ASL", 2, 5, AddressingMode::ZeroPage),
@@ -150,7 +150,7 @@ lazy_static! {
         OpCode::new(0xe0, "CPX", 2, 2, AddressingMode::Immediate),
         OpCode::new(0xe4, "CPX", 2, 3, AddressingMode::ZeroPage),
         OpCode::new(0xec, "CPX", 3, 4, AddressingMode::Absolute),
-       /////////////////////////////////////Branching
+       /////////////////////////////////////FLOW CONTROL
         ////JMP
         OpCode::new(0x4c, "JMP", 3, 3, AddressingMode::NoneAddressing), //AddressingMode that acts as Immediate
         OpCode::new(0x6c, "JMP", 3, 5, AddressingMode::NoneAddressing), //AddressingMode:Indirect with 6502 bug
@@ -172,7 +172,7 @@ lazy_static! {
         //// BIT
         OpCode::new(0x24, "BIT", 2, 3, AddressingMode::ZeroPage),
         OpCode::new(0x2c, "BIT", 3, 4, AddressingMode::Absolute),
-       /////////////////////////////////////Storing, Loading
+       /////////////////////////////////////LOADERS/UNLOADERS
         //// LDA
         OpCode::new(0xa9, "LDA",  2,  2, AddressingMode::Immediate),
         OpCode::new(0xa5, "LDA",  2,  3, AddressingMode::ZeroPage),
@@ -210,7 +210,7 @@ lazy_static! {
         OpCode::new(0x84, "STY", 2, 3, AddressingMode::ZeroPage),
         OpCode::new(0x94, "STY", 2, 4, AddressingMode::ZeroPage_X),
         OpCode::new(0x8c, "STY", 3, 4, AddressingMode::Absolute),
-       /////////////////////////////////////Flag Set/Clear
+       /////////////////////////////////////FLAG SET/CLEAR
         OpCode::new(0xD8, "CLD", 1, 2, AddressingMode::NoneAddressing),
         OpCode::new(0x58, "CLI", 1, 2, AddressingMode::NoneAddressing),
         OpCode::new(0xb8, "CLV", 1, 2, AddressingMode::NoneAddressing),
@@ -226,7 +226,7 @@ lazy_static! {
         OpCode::new(0x8a, "TXA", 1, 2, AddressingMode::NoneAddressing),
         OpCode::new(0x9a, "TXS", 1, 2, AddressingMode::NoneAddressing),
         OpCode::new(0x98, "TYA", 1, 2, AddressingMode::NoneAddressing),
-       /////////////////////////////////////Stack
+       /////////////////////////////////////STACK PUSHPOP
         OpCode::new(0x48, "PHA", 1, 3, AddressingMode::NoneAddressing),
         OpCode::new(0x68, "PLA", 1, 4, AddressingMode::NoneAddressing),
         OpCode::new(0x08, "PHP", 1, 3, AddressingMode::NoneAddressing),
