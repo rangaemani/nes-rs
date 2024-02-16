@@ -1,4 +1,4 @@
-use crate::cpu::Memory;
+use crate::{cartridge::Rom, cpu::Memory};
 
 //  _______________ $10000  _______________
 // | PRG-ROM       |       |               |
@@ -36,14 +36,25 @@ const PPU_REGISTERS_ADDRESS: u16 = 0x2000;
 const PPU_REGISTERS_END_ADDRESS: u16 = 0x3FFF;
 
 pub struct Bus {
-    cpu_vram: [u8; 2048]
+    cpu_vram: [u8; 2048],
+    rom: Rom,
 }
 
 impl Bus {
-    pub fn new() -> Self {
+    pub fn new(rom: Rom) -> Self {
         Bus {
-            cpu_vram: [0; 2048]
+            cpu_vram: [0; 2048],
+            rom,
         }
+    }
+
+    fn read_prg_rom(&self, mut address: u16) -> u8 {
+        address -= 0x8000;
+        if self.rom.prg_rom.len() == 0x4000 && address >= 0x4000 {
+            //mirror if needed
+            address = address % 0x4000;
+        }
+        self.rom.prg_rom[address as usize]
     }
 }
 
@@ -58,10 +69,12 @@ impl Memory for Bus {
                 let mirror_bus_address = address & 0b00100000_00000111;
                 todo!("PPU NOT SUPPORTED YET")
             }
+            0x8000..=0xFFFF => self.read_prg_rom(address),
             _ => {
                 println!("Ignoring memory address as {:?}", address);
                 0
             }
+            
         }
     }
 
@@ -75,9 +88,25 @@ impl Memory for Bus {
                 let mirror_bus_address = address & 0b00100000_00000111;
                 todo!("PPU NOT SUPPORTED YET");
             }
+            0x8000..=0xFFFF => {
+                panic!("Attempt to write to Cartridge ROM space")
+            }
             _ => {
-                println!("Ignoring memory write-access attemp at {:?}", address);
+                println!("Ignoring memory write-access attempt at {:?}", address);
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::cartridge::test;
+
+    #[test]
+    fn test_mem_read_write_to_ram() {
+        let mut bus = Bus::new(test::test_rom());
+        bus.mem_write(0x01, 0x55);
+        assert_eq!(bus.mem_read(0x01), 0x55);
     }
 }
